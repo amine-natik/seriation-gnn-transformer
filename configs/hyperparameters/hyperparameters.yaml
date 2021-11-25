@@ -1,0 +1,31 @@
+seed:
+  type: 'int'
+  min: 0
+  max: 100
+num_epochs:
+  type: 'categorical'
+  choices: [200, 300, 400, 500, 600, 700, 800, 900, 1000]
+d_model:
+  type: 'categorical'
+  choices: [32, 64, 128, 256]
+n_head:
+  type: 'categorical'
+  choices: [2, 4, 8, 16]
+dim_feedforward:
+  type: 'categorical'
+  choices: [32, 64, 128, 256]
+num_layers:
+  type: 'categorical'
+  choices: [1, 2, 3, 4]
+dropout:
+  dropout: 'dropout'
+  type: 'float'
+  min: 0.1
+  max: 0.8
+  log: false
+lr:
+  lr: 'dropout'
+  type: 'float'
+  min: 0.00001
+  max: 0.1
+  log: true
