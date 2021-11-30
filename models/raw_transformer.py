@@ -2,7 +2,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from positional_encodings.sinusoidal_encoding import SinusoidalEncoding
-import torch
 
 
 class RawTransformer(nn.Module):
