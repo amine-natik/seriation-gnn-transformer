@@ -2,22 +2,23 @@ hydra:
   run:
     dir: .outputs/${hydra.job.name}/data_${data}_model_${model}
 
-data: 'cora'
-data_root: './data/Cora'
-load_method: 'discrete_ordering'
-model: 'RawTransformer'
-n_tokens: 1433
-n_classes: 7
-seed: 59
-d_model: 128
-dim_feedforward: 128
-n_head: 8
-num_layers: 2
+data: 'Cora'
+data_root: './data/'
 exp_name: ???
 save_dir: '.outputs'
-num_epochs: 200
+process_method: 'laplacian_ordering'
+model: 'RawTransformer'
+loss_fn: 'NLLLoss'
+optimizer: 'Adam'
 device: 'cuda'
+seed: 3
+d_model: 128
+dim_feedforward: 128
+n_head: 4
+num_layers: 1
+num_epochs: 10
 show_log: true
 save_ckpt: false
-dropout: 0.5852727510200074
-lr: 0.002
+dropout: 0.2
+lr: 0.01
+idx: 82

@@ -1,6 +1,7 @@
 import hydra
 from engine.model_engine_builder import model_engine_builder
 
+
 @hydra.main(config_path='configs', config_name='config')
 def experiment(cfg):
     cfg.save_dir = hydra.utils.to_absolute_path(cfg.save_dir)

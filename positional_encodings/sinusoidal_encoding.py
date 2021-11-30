@@ -2,8 +2,9 @@ import torch
 import torch.nn as nn
 import math
 
+
 class SinusoidalEncoding(nn.Module):
-    def __init__(self, d_model, dropout, max_len = 2708):
+    def __init__(self, d_model, dropout, max_len):
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
         position = torch.arange(max_len).unsqueeze(1)

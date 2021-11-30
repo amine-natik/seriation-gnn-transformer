@@ -13,5 +13,6 @@ def experiment(cfg):
     study.optimize(hyper_search.objective, n_trials=cfg.n_trials, timeout=cfg.timeout)
     hyper_search.launch_search(study)
 
+
 if __name__ == '__main__':
     experiment()

@@ -8,5 +8,5 @@ hydra:
     dir: .outputs/${hydra.job.name}/data_${data}_model_${model}
 
 direction: 'maximize'
-n_trials: 50000
-timeout: 3600
+n_trials: 200
+timeout: 500
