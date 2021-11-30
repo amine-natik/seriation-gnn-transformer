@@ -6,7 +6,7 @@ data: 'Cora'
 data_root: './data/'
 exp_name: ???
 save_dir: '.outputs'
-process_method: 'laplacian_ordering'
+process_method: 'label_ordering'
 model: 'RawTransformer'
 loss_fn: 'NLLLoss'
 optimizer: 'Adam'
