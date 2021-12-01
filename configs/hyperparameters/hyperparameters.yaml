@@ -3,20 +3,20 @@ num_epochs:
   choices: [10, 20, 30, 40, 50, 100, 150, 200, 250, 300]
 d_model:
   type: 'categorical'
-  choices: [64, 128, 256]
+  choices: [32, 64, 128, 256]
 n_head:
   type: 'categorical'
-  choices: [2, 4, 8]
+  choices: [2, 4, 8, 16]
 dim_feedforward:
   type: 'categorical'
-  choices: [64, 128, 256]
+  choices: [32, 64, 128, 256]
 num_layers:
   type: 'categorical'
   choices: [1, 2, 3, 4]
 dropout:
   type: 'float'
-  min: 0.2
-  max: 0.8
+  min: 0.1
+  max: 0.9
   log: false
 lr:
   type: 'float'
