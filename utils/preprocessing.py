@@ -3,13 +3,32 @@ from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
 from scipy.sparse.linalg import eigsh
 import os
 from pathlib import Path
+from utils.tmp_utils import *
+
+
+def se_ordering(graph, save_dir, idx):
+    save_dir = Path(save_dir)
+    if not save_dir.exists():
+        save_dir.mkdir()
+    save_path = save_dir.joinpath(f".permutation_se_idx:{idx}.pt")
+
+    if os.path.isfile(save_path):
+        permutation = torch.load(save_path)
+    else:
+        affinity_matrix = get_affinity_matrix(graph)
+        embedding = get_embedding(affinity_matrix, dim=idx, method='Spectral Embedding')
+        distances = get_distances(embedding)
+        permutation = get_permutation(distances)
+        torch.save(permutation, save_path)
+
+    return permutation
 
 
 def laplacian_ordering(graph, save_dir, idx):
     save_dir = Path(save_dir)
     if not save_dir.exists():
         save_dir.mkdir()
-    save_path = save_dir.joinpath('eigenvectors.pt')
+    save_path = save_dir.joinpath('.eigenvectors.pt')
 
     if os.path.isfile(save_path):
         eigenvectors = torch.load(save_path)
