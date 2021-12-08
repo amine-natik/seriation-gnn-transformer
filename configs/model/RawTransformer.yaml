@@ -1,0 +1,9 @@
+name: 'RawTransformer'
+loss_fn: 'NLLLoss'
+optimizer: 'Adam'
+d_model: 128
+dim_feedforward: 128
+n_head: 4
+num_layers: 1
+dropout: 0.2
+lr: 0.0105

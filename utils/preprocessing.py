@@ -10,16 +10,16 @@ def se_ordering(graph, save_dir, idx):
     save_dir = Path(save_dir)
     if not save_dir.exists():
         save_dir.mkdir()
-    save_path = save_dir.joinpath(f".permutation_se_idx:{idx}.pt")
-
+    save_path = save_dir.joinpath(f".embedding_se_idx:{idx}.pt")
     if os.path.isfile(save_path):
-        permutation = torch.load(save_path)
+        embedding = torch.load(save_path)
     else:
         affinity_matrix = get_affinity_matrix(graph)
         embedding = get_embedding(affinity_matrix, dim=idx, method='Spectral Embedding')
-        distances = get_distances(embedding)
-        permutation = get_permutation(distances)
-        torch.save(permutation, save_path)
+        torch.save(embedding, save_path)
+
+    distances = get_distances(embedding)
+    permutation = get_permutation(distances)
 
     return permutation
 

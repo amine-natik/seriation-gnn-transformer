@@ -27,22 +27,22 @@ def model_engine_builder(cfg):
     n_classes = graph.y.max().item() + 1
 
     # Setup the model
-    if cfg.model == 'RawTransformer':
-        model = RawTransformer(n_tokens, cfg.d_model, cfg.n_head, cfg.dim_feedforward,
-                               cfg.num_layers, n_classes, cfg.dropout, max_len)
+    if cfg.model.name == 'RawTransformer':
+        model = RawTransformer(n_tokens, cfg.model.d_model, cfg.model.n_head, cfg.model.dim_feedforward,
+                               cfg.model.num_layers, n_classes, cfg.model.dropout, max_len)
         model.to(cfg.device)
     else:
         raise NotImplementedError('Model not supported')
 
     # The loss function
-    if cfg.loss_fn == 'NLLLoss':
+    if cfg.model.loss_fn == 'NLLLoss':
         loss_fn = nn.NLLLoss()
     else:
         raise NotImplementedError('Loss function not supported')
 
     # The optimizer
-    if cfg.optimizer == 'Adam':
-        optimizer = optim.Adam(model.parameters(), lr=cfg.lr)
+    if cfg.model.optimizer == 'Adam':
+        optimizer = optim.Adam(model.parameters(), lr=cfg.model.lr)
     else:
         raise NotImplementedError('Optimizer not supported')
 
@@ -51,15 +51,15 @@ def model_engine_builder(cfg):
     except omegaconf.errors.MissingMandatoryValue:
         cfg.exp_name = set_experiment_name(
             data=cfg.data,
-            model=cfg.model,
+            model=cfg.model.name,
             process_method=cfg.process_method,
             epochs=cfg.num_epochs,
-            d_model=cfg.d_model,
-            n_head=cfg.n_head,
-            dim_feedforward=cfg.dim_feedforward,
-            num_layers=cfg.num_layers,
-            dropout=cfg.dropout,
-            lr=cfg.lr)
+            d_model=cfg.model.d_model,
+            n_head=cfg.model.n_head,
+            dim_feedforward=cfg.model.dim_feedforward,
+            num_layers=cfg.model.num_layers,
+            dropout=cfg.model.dropout,
+            lr=cfg.model.lr)
         exp_name = cfg.exp_name
 
     return ModelEngine(model, graph, loss_fn, optimizer, exp_name, cfg.num_epochs, cfg.save_dir, cfg.save_ckpt,

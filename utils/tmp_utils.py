@@ -42,7 +42,10 @@ def get_permutation(distances):
     indices = [100]
     for _ in range(n-1):
         idx = indices[-1]
-        next_idx = torch.argmin(distances[idx, :])
+        k = 2
+        sorted_distances = torch.argsort(distances[idx, :])
+        next_idx = torch.randperm(k)[0].item()
+        next_idx = sorted_distances[next_idx]
         indices.append(next_idx.item())
         distances[idx, :] = inf_matrix
         distances[:, idx] = inf_matrix

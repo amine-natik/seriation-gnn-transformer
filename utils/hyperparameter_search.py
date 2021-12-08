@@ -10,11 +10,20 @@ class HyperparameterSearch:
     def get_parameters(self, cfg, trial):
         for (name, parameter) in self.cfg.hyperparameters.items():
             if parameter.type == 'categorical':
-                cfg[name] = trial.suggest_categorical(name, parameter.choices)
-            if parameter.type == 'int':
-                cfg[name] = trial.suggest_int(name, parameter.min, parameter.max)
-            if parameter.type == 'float':
-                cfg[name] = trial.suggest_float(name, parameter.min, parameter.max, log=parameter.log)
+                suggestion = trial.suggest_categorical(name, parameter.choices)
+            elif parameter.type == 'int':
+                suggestion = trial.suggest_int(name, parameter.min, parameter.max)
+            elif parameter.type == 'float':
+                suggestion = trial.suggest_float(name, parameter.min, parameter.max, log=parameter.log)
+            else:
+                raise NotImplemented("parameter type not supported")
+
+            if parameter.confdir == 'model':
+                cfg.model[name] = suggestion
+            elif parameter.confdir == 'configs':
+                cfg[name] = suggestion
+            else:
+                raise NotImplemented("parameter configuration nor supported")
         return cfg
 
     def objective(self, trial):
