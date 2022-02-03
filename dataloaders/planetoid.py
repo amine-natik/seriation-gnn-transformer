@@ -1,5 +1,5 @@
 from torch_geometric.datasets import Planetoid
-from utils.preprocessing import label_ordering, random_ordering, no_ordering, laplacian_ordering, se_ordering
+from utils.preprocessing import label_ordering, random_ordering, no_ordering, laplacian_ordering, se_ordering, spectral_ordering
 
 
 def load_graph(data_root, data_name):
@@ -27,6 +27,8 @@ def process_graph(graph, process_method, save_dir=None, idx=None):
 
     elif process_method == 'random_ordering':
         permutation = random_ordering(graph)
+    elif process_method == 'spectral_ordering':
+        permutation = spectral_ordering(graph)
 
     else:
         raise NotImplemented("Preprocessing method not supported")

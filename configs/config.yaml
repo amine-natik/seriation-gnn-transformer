@@ -14,6 +14,6 @@ process_method: 'se_ordering'
 device: 'cuda'
 show_log: true
 save_ckpt: false
-seed: 3
+seed: 42
 num_epochs: 10
 idx: 49

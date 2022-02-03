@@ -1,6 +1,9 @@
 import optuna.exceptions
 import torch
 from utils.utils import save_checkpoint, accuracy
+from torch.optim.lr_scheduler import CosineAnnealingLR
+
+
 
 
 class ModelEngine:
@@ -15,6 +18,10 @@ class ModelEngine:
         self.save_ckpt = save_ckpt
         self.log = log
         self.show_log = show_log
+        self.lr_scheduler = CosineAnnealingLR(self.optimizer, T_max=100)
+        self.best_epoch = 0
+        self.best_val_acc = 0
+        self.best_test_acc = 0
 
     def loss_backward(self, predictions, targets):
         self.optimizer.zero_grad()
@@ -34,11 +41,17 @@ class ModelEngine:
         self.model.train()
         for epoch in range(self.num_epochs):
             train_accuracy = self.train_one_epoch()
+            self.lr_scheduler.step()
             validation_accuracy = self.validate(is_test=False)
+            test_accuracy = self.validate(is_test=True)
+            if validation_accuracy > self.best_val_acc:
+                self.best_val_acc = validation_accuracy
+                self.best_test_acc = test_accuracy
+                self.best_epoch = epoch
 
             if self.show_log:
                 self.log.info(
-                    f"Epoch [{epoch + 1}|{self.num_epochs}]: Train accuracy={train_accuracy:.4f}% -- Validation accuracy={validation_accuracy:.4f}%")
+                    f"Epoch [{epoch + 1}|{self.num_epochs}]: Train accuracy={train_accuracy:.4f}% -- Validation accuracy={validation_accuracy:.4f}% -- Test accuracy={test_accuracy:.4f}%")
 
             if trial is not None:
                 trial.report(validation_accuracy, epoch)
@@ -46,11 +59,10 @@ class ModelEngine:
                 if trial.should_prune():
                     raise optuna.exceptions.TrialPruned()
 
-        test_accuracy = self.validate(is_test=True)
-        self.log.info(f"Model test accuracy={test_accuracy:.4f}%")
+        self.log.info(f"Model test accuracy = {self.best_test_acc:.4f}% -- Epoch = {self.best_epoch}")
         if self.save_ckpt:
             self.log.info(f'Saving model to: {self.save_dir}')
-            save_checkpoint(self.model, test_accuracy, self.num_epochs, self.exp_name, self.save_dir)
+            save_checkpoint(self.model, self.best_val_acc, self.best_epoch, self.exp_name, self.save_dir)
 
     def validate(self, is_test):
         self.model.eval()

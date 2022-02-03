@@ -1,9 +1,21 @@
-import torch
 from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
 from scipy.sparse.linalg import eigsh
 import os
 from pathlib import Path
 from utils.tmp_utils import *
+import networkx as nx
+
+
+def spectral_ordering(graph):
+    G = nx.Graph()
+    # G.add_nodes_from([i for i in range(graph.x.shape[0])])
+    G.add_edges_from(graph.edge_index.T.tolist())
+    cc = [G.subgraph(c).copy() for c in sorted(nx.connected_components(G), key=len, reverse=True)]
+    permutation = []
+    for c in cc:
+        order = nx.spectral_ordering(c)
+        permutation.extend(order)
+    return torch.tensor(permutation)
 
 
 def se_ordering(graph, save_dir, idx):

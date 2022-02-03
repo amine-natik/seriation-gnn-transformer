@@ -26,11 +26,15 @@ class HyperparameterSearch:
                 raise NotImplemented("parameter configuration nor supported")
         return cfg
 
-    def objective(self, trial):
+    def get_engine(self, trial):
         cfg = self.get_parameters(self.cfg, trial)
         engine = model_engine_builder(cfg)
         engine.train(trial)
-        accuracy = engine.validate(is_test=True)
+        return engine
+
+    def objective(self, trial):
+        engine = self.get_engine(trial)
+        accuracy = engine.best_val_acc
         return accuracy
 
     def launch_search(self, study):
@@ -44,14 +48,20 @@ class HyperparameterSearch:
 
         print("Best trial:")
         trial = study.best_trial
-        best_accuracy = trial.value
+        best_engine = self.get_engine(trial)
+        best_cfg = self.get_parameters(self.cfg, trial)
         hyperparameters = dict()
-        print("  Best test accuracy: ", best_accuracy)
+
         print("  Params: ")
         for key, value in trial.params.items():
             hyperparameters[key] = value
             print("    {}: {}".format(key, value))
 
+        print("ENGINE BEST EPOCH: ", best_engine.best_epoch)
+        print("ENGINE BEST TEST ACCURACY: ", best_engine.best_test_acc)
+        print("ENGINE BEST VAL ACCURACY: ", best_engine.best_val_acc)
+
         # Saving the configuration
-        OmegaConf.save(hyperparameters, f"hyperparameters_test_accuracy:{best_accuracy:.4f}.yaml")
-        OmegaConf.save(self.cfg, "config.yaml")
+        OmegaConf.save(hyperparameters, f"hyperparameters_test_accuracy:{best_engine.best_test_acc:.4f}.yaml")
+        OmegaConf.save(best_cfg, f"config_test_accuracy:{best_engine.best_test_acc:.4f}.yaml")
+

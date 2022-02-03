@@ -8,6 +8,7 @@ def experiment(cfg):
     cfg.data_root = hydra.utils.to_absolute_path(cfg.data_root)
     engine = model_engine_builder(cfg)
     engine.train()
+    print(engine.validate(is_test=True))
 
 
 if __name__ == '__main__':
