@@ -39,7 +39,7 @@ def get_distances(embedding):
 def get_permutation(distances):
     n = distances.size(0)
     inf_matrix = float('inf') * torch.ones(n)
-    indices = [100]
+    indices = [500]
     for _ in range(n-1):
         idx = indices[-1]
         k = 2
