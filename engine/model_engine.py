@@ -23,17 +23,18 @@ class ModelEngine:
         self.best_val_acc = 0
         self.best_test_acc = 0
 
-    def loss_backward(self, predictions, targets):
+    def loss_backward(self, predictions, targets, emb):
         self.optimizer.zero_grad()
-        loss = self.loss_fn(predictions, targets)
+        loss = self.loss_fn(predictions, targets, emb)
         loss.backward()
         self.optimizer.step()
         return loss
 
     def train_one_epoch(self):
         inputs, targets, mask = self.graph.x, self.graph.y, self.graph.train_mask
+        emb = self.model.pos_emb(inputs)
         predictions = self.model(inputs)
-        _ = self.loss_backward(predictions[mask], targets[mask])
+        _ = self.loss_backward(predictions[mask], targets[mask], emb)
         train_accuracy = accuracy(predictions[mask], targets[mask])
         return train_accuracy
 

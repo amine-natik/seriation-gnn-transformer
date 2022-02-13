@@ -7,7 +7,10 @@ import logging
 from engine.model_engine import ModelEngine
 from utils.utils import set_experiment_name
 from models.raw_transformer import RawTransformer
+from models.learn_embedding import LearnEmbedding
 from dataloaders.planetoid import load_graph, process_graph
+from utils.laplacian_loss import LaplacianLoss
+from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
 
 
 def model_engine_builder(cfg):
@@ -31,12 +34,20 @@ def model_engine_builder(cfg):
         model = RawTransformer(n_tokens, cfg.model.d_model, cfg.model.n_head, cfg.model.dim_feedforward,
                                cfg.model.num_layers, n_classes, cfg.model.dropout, max_len)
         model.to(cfg.device)
+    elif cfg.model.name == 'LearnEmbedding':
+        model = LearnEmbedding(n_tokens, cfg.model.d_model, cfg.model.n_head, cfg.model.dim_feedforward,
+                               cfg.model.num_layers, n_classes, cfg.model.dropout, max_len).to(cfg.device)
     else:
         raise NotImplementedError('Model not supported')
+
+    # Loss_fn diff approach
+
 
     # The loss function
     if cfg.model.loss_fn == 'NLLLoss':
         loss_fn = nn.NLLLoss()
+    elif cfg.model.loss_fn == 'Laplacian':
+        loss_fn = LaplacianLoss(graph, cfg.alpha, sigma=1)
     else:
         raise NotImplementedError('Loss function not supported')
 
